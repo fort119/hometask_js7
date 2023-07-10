@@ -1,65 +1,92 @@
-let a;
-let b;
-let c;
-let d;
-let x1;
-let x2;
-
-function askVariables() {
+//recieving data from user
+function askVariables(a, b, c) {
   do {
     a = prompt("Будемо знаходить рішення квадратного рівняння виду: ax^2 + bx + c = 0.\nВведіть a")
     if (a == null) {
       alert("Жаль. Сподіваюсь ще побачитись")
-      return a = undefined;
+      return null;
     }
   } while (isNaN(a) || a == "" || a == " ");
   do {
     b = prompt(`a = ${a}` + "\n" + "Введіть b")
     if (b == null) {
       alert("Жаль. Сподіваюсь ще побачитись")
-      return b = undefined;
+      return null;
     }
   } while (isNaN(b) || b == "" || b == " ");
   do {
     c = prompt(`a = ${a}, b = ${b}` + "\n" + "Введіть c")
     if (c == null) {
       alert("Жаль. Сподіваюсь ще побачитись")
-      return c = undefined;
+      return null;
     }
   } while (isNaN(c) || c == "" || c == " ");
+  return {
+    a: a,
+    b: b,
+    c: c,
+  }
 }
 
-function findDiscriminant() {
-  d = (b * b) - (4 * a * c);
-  return d;
+//callback
+function checkA() {
+  alert("a = 0. Рівняння не має рішень")
 }
 
-function findSolutions() {
+//calculations
+function findSolutions(data, ifInvalid) {
+
+  if (data === null) {
+    return null;
+  }
+
+  if (data.a == 0) {
+    ifInvalid();
+    return null;
+  }
+
+  let d = (data.b * data.b) - (4 * data.a * data.c);
   if (d > 0) {
-    x1 = (-b + Math.sqrt(d)) / (2 * a);
-    x2 = (-b - Math.sqrt(d)) / (2 * a);
+    x1 = (-data.b + Math.sqrt(d)) / (2 * data.a);
+    x2 = (-data.b - Math.sqrt(d)) / (2 * data.a);
+    return {
+      d: d,
+      x1: x1,
+      x2: x2,
+    }
   } else if (d < 0) {
-    x1 = "";
-    x2 = "";
+    return {
+      d: d,
+      x1: null,
+      x2: null,
+    }
   } else if (d == 0) {
-    x1 = (-b + Math.sqrt(d)) / (2 * a);
-    x2 = "";
+    x1 = (-data.b + Math.sqrt(d)) / (2 * data.a);
+    return {
+      d: d,
+      x1: x1,
+      x2: null,
+    }
   }
 }
 
-function showSolutions() {
-  if (a == 0) {
-    alert("a = 0. Рівняння не має рішень");
-  } else if (d < 0) {
+//showing results
+function showSolutions(results) {
+  if (results === null) {
+    return null;
+  }
+  if (results.d < 0) {
     alert("D < 0. Рівняння не має рішень");
-  } else if (d > 0) {
-    alert(`D > 0. Корені рівняння: ${x1}, ${x2}`);
-  } else if (d == 0) {
-    alert(`D = 0. Єдиний корень рівняння: ${x1}`);
+    return;
+  } else if (results.d > 0) {
+    alert(`D > 0. Корені рівняння: ${results.x1}, ${results.x2}`);
+    return;
+  } else if (results.d === 0) {
+    alert(`D = 0. Єдиний корень рівняння: ${results.x1}`);
+    return;
   }
 }
 
-askVariables();
-findDiscriminant();
-findSolutions();
-showSolutions();
+let variables = askVariables();
+let solutions = findSolutions(variables, checkA);
+showSolutions(solutions);
